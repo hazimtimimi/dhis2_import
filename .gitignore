@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+dhis2_import.Rproj
+
+# ignore the configuration file to set user's local environment
+set_*.r
+# ignore all html files
+*.html
