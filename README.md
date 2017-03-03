@@ -24,30 +24,23 @@ This project creates CSV output files that conform to the DHIS@ specification at
 ```
 Data Administration app > SQL view > organisation_internal_ids_and_country  > Show SQL View > Download as CSV
 ```
-(See `dhis2_import_functions.r` for the SQL behind the organisation_internal_ids_and_country view)
-
+    (See `dhis2_import_functions.r` for the SQL behind the organisation_internal_ids_and_country view)
 2. Edit `set_parameters.r` to specify check_only mode, country, input and output file names
-
 3. After making sure `check_only <- TRUE` in `set_parameters.r`, do in RStudio:
 ```
 > source(transform_data.r)
 ```
-
 4. In RStudio, check the contents of the following dataframes:
 
 * `duplicated_orgunits`   (make sure it is empty)
 * `all_periods`  (make sure the periods are the ones you expected to see)
 * `missing_orgunits`    (make sure it is empty)
 * `missing_data_elements` (make sure it is empty)
-
-   Fix the input file if any of the above are not true and repeat steps 3 and 4 until all conditions are met.
-
-
+    Fix the input file if any of the above are not true and repeat steps 3 and 4 until all conditions are met.
 5. Once assured that input data is consistent with DHIS2 contents (orgunit names and data element codes all match), change `check_only <- FALSE` in `set_parameters.r` and then do in RStudio:
 ```
 > source(transform_data.r)
 ```
-
 6. Find and import CSV files into DHIS2. If you had set `test_orgunit` to an orgunit name then you will find a file called `testing_file_to_import_yyyy-mm-dd.csv` in your output folder. This testing file has data just for the one orgunit which you can import into DHIS2 to verify that the data are being imported correctly. Once satisfied you can import the full data file, called `ZZZZZ_to_import_yyyy-mm-dd.csv`, where ZZZZZ is the output file name you specified in `set_parameters.r`.
 
 
