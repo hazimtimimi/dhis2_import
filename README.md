@@ -18,13 +18,41 @@ etc ... |  |  |  |  |
 This project creates CSV output files that conform to the DHIS@ specification at https://docs.dhis2.org/2.25/en/developer/html/webapi_data_values.html#webapi_data_values_csv 
 
 
-## Use
+## Requirements
+
+* **R packages**:
+    * RODBC
+    * dplyr
+    * tidyr
+    * stringr
+
+* **R** (I developed these scripts using R version 3.3.2)
+
+* **RStudio**, although not strictly necessary (I developed these scripts using RStudio version 1.0.136)
+
+* **DHIS2** (I developed these scripts using DHIS2 version 2.25). 
+    
+    In our instance we have the following orgunit hierarchy:
+    
+    1. Global
+    2. Region
+    3. Country
+    4. Admin 1
+    5. Admin 2 or facility
+    6. Facility
+    
+    You will need 2 SQL views in your DHIS2 instance:
+
+    * organisation_internal_ids_and_country
+    * data_and_category_internal_ids
+
+    The `organisation_internal_ids_and_country` view lists the country to which an orgunit belongs, assuming it is level 3 of the hierarchy. This is used to filter orgunits by country.
+
+## Instructions
 
 1. Make sure DHIS2 reference files are up to date. If new orgunits have been added then log into DHIS2 and do the following
 
     `Data Administration app > SQL view > organisation_internal_ids_and_country  > Show SQL View > Download as CSV`
-
-    (See `dhis2_import_functions.r` for the SQL behind the organisation_internal_ids_and_country view)
     
 2. Edit `set_parameters.r` to specify check_only mode, country, input and output file names
 
