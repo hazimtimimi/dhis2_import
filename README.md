@@ -58,7 +58,7 @@ This project creates CSV output files that conform to the DHIS@ specification at
 
 3. After making sure `check_only <- TRUE` in `set_parameters.r`, do in RStudio:
 
-    `> source(transform_data.r)`
+    `> source("transform_data.r")`
 
 4. In RStudio, check the contents of the following dataframes:
 
@@ -71,7 +71,7 @@ This project creates CSV output files that conform to the DHIS@ specification at
     
 5. Once assured that input data is consistent with DHIS2 contents (orgunit names and data element codes all match), change `check_only <- FALSE` in `set_parameters.r` and then do in RStudio:
 
-    `> source(transform_data.r)`
+    `> source("transform_data.r")`
     
 6. Find and import CSV files into DHIS2. If you had set `test_orgunit` to an orgunit name then you will find a file called `testing_file_to_import_yyyy-mm-dd.csv` in your output folder. This testing file has data just for the one orgunit which you can import into DHIS2 to verify that the data are being imported correctly. 
 
