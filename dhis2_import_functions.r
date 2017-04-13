@@ -13,6 +13,7 @@ get_dhis2_orgunit_ids <- function(orgunit_ids_csv_file) {
   #
   # SELECT o.uid,
   #           o.shortname,
+  #           o.code,
   #           c.shortname AS countryname
   # FROM organisationunit AS o
   # INNER JOIN _orgunitstructure ON
@@ -75,24 +76,37 @@ get_dhis2_data_element_ids <- function(data_element_ids_csv_file) {
 
 }
 
-check_no_dups_without_diacritics <- function(dhis2_orgunits) {
+check_no_dups_without_diacritics <- function(dhis2_orgunits, match_code) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Finds if there are any duplicated orgunit names in DHIS2 if we ignore
+  # Finds if there are any duplicated orgunit names or codes in DHIS2 if we ignore
   # diacritics
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  # convert names to upper case and accented characters to plain text characters
+  if (isTRUE(match_code)) {
 
-  dhis2_orgunits$shortname <- toupper(dhis2_orgunits$shortname)
-  dhis2_orgunits$shortname <- gsub("É", "E", dhis2_orgunits$shortname)
-  dhis2_orgunits$shortname <- gsub("Ï", "I", dhis2_orgunits$shortname)
-  dhis2_orgunits$shortname <- gsub("Ô", "O", dhis2_orgunits$shortname)
+    # ignore short name and just look at codes
 
-  duplicates <- dhis2_orgunits %>%
-                group_by(shortname) %>%
-                arrange(shortname) %>%
-                filter(n()>1)
+    duplicates <- dhis2_orgunits %>%
+                  group_by(code) %>%
+                  arrange(code) %>%
+                  filter(n()>1)
+
+  } else {
+
+   # convert names to upper case and accented characters to plain text characters
+
+    dhis2_orgunits$shortname <- toupper(dhis2_orgunits$shortname)
+    dhis2_orgunits$shortname <- gsub("É", "E", dhis2_orgunits$shortname)
+    dhis2_orgunits$shortname <- gsub("Ï", "I", dhis2_orgunits$shortname)
+    dhis2_orgunits$shortname <- gsub("Ô", "O", dhis2_orgunits$shortname)
+
+    duplicates <- dhis2_orgunits %>%
+                  group_by(shortname) %>%
+                  arrange(shortname) %>%
+                  filter(n()>1)
+  }
+
 
   return(duplicates)
 }
@@ -113,18 +127,40 @@ get_excel_data <- function(filename, worksheet){
 }
 
 
-unpivot_for_dhis2 <- function(dataframe) {
+unpivot_for_dhis2 <- function(dataframe, match_code) {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Unpivot a dataframe into long format used by DHIS2 as specified at
   # https://docs.dhis2.org/2.25/en/developer/html/webapi_data_values.html#webapi_data_values_csv
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+if (isTRUE(match_code)) {
+
+  #Drop the orgunit name if it exists
+  if ("orgunit" %in% colnames(dataframe)) {
+    dataframe <- select(dataframe, -orgunit)
+  }
+
+  #keep the organisation code
+  dataframe %>% gather(key = variable_name,
+                       value,
+                       # and specify the variables to exclude from long format
+                       # (i.e. they become the keys -- code and period)
+                       -code, -period)
+
+} else {
+
+  # keep the organisation shortname
   dataframe %>% gather(key = variable_name,
                        value,
                        # and specify the variables to exclude from long format
                        # (i.e. they become the keys -- orgunit and period)
                        -orgunit, -period)
+
+}
+
+
+
 }
 
 
@@ -182,6 +218,41 @@ link_country_org_ids <- function(dataframe, dhis2_orgunits, country) {
 
 }
 
+link_country_org_ids_by_code <- function(dataframe, dhis2_orgunits, country) {
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Add unique dhis2 internal orgunit codes to a dataframe, matching on
+  # orgunit *codes* instead of short names
+  #
+  # The file is filtered by country name to avoid linking to an organisation with
+  # the code but in a different country
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  # Get rid of empty rows (code empty)
+  dataframe <- dataframe %>%
+               filter(is.na(code) == FALSE)
+
+  # Remove any trailing spaces from the code in the data to import
+  dataframe$code <- sub("\\s+$", "", dataframe$code)
+
+
+  # Filter the DHIS2 org units by country
+  dhis2_orgunits <- dhis2_orgunits %>%
+                    filter(countryname == country)
+
+  # Convert codes from DHIS2 and the data to import to upper case
+  dhis2_orgunits$code <- toupper(dhis2_orgunits$code)
+  dataframe$code <- toupper(dataframe$code)
+
+  # link to the DHIS2 file containing orgunit unique IDs
+  dataframe <- dataframe %>%
+                left_join(dhis2_orgunits, by = c("code" = "code")) %>%
+                rename(org_uid = uid)
+
+
+  return(dataframe)
+
+}
 
 
 link_var_uids <- function(dataframe, dhis2_variable_uids) {

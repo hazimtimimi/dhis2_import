@@ -86,7 +86,7 @@ if (isTRUE(check_only)) {
 
   duplicated_orgunits <- orgunits %>%
                          filter(countryname == country) %>%
-                         check_no_dups_without_diacritics()
+                         check_no_dups_without_diacritics(match_on_orgcode)
 
   View(duplicated_orgunits)
 }
@@ -103,7 +103,7 @@ data_to_import <- get_excel_data(input_file, input_worksheet)
 # Transform data to long format needed by DHIS2 ----
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-data_to_import <- unpivot_for_dhis2(data_to_import)
+data_to_import <- unpivot_for_dhis2(data_to_import, match_on_orgcode)
 
 # Remove records with no data
 data_to_import <- data_to_import %>%
@@ -122,17 +122,35 @@ if (isTRUE(check_only)) {
 
 # Add orgunit DHIS2 unique IDs ----
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-data_to_import <- link_country_org_ids(data_to_import, orgunits, country)
 
+if (isTRUE(match_on_orgcode)) {
+
+  # match on orgcodes
+   data_to_import <- link_country_org_ids_by_code(data_to_import, orgunits, country)
+
+} else {
+
+  # match on shortnames
+  data_to_import <- link_country_org_ids(data_to_import, orgunits, country)
+}
 
 # Check there are no orgunits with missing DHIS2 unique IDs ----
 if (isTRUE(check_only)) {
 
-  missing_orgunits <- data_to_import %>%
-                      filter(is.na(org_uid)) %>%
-                      group_by(orgunit) %>%
-                      summarise(n())
+  if (isTRUE(match_on_orgcode)) {
+    # group on org code
+    missing_orgunits <- data_to_import %>%
+                        filter(is.na(org_uid)) %>%
+                        group_by(code) %>%
+                        summarise(n())
 
+  } else {
+    # group on orgunit
+    missing_orgunits <- data_to_import %>%
+                        filter(is.na(org_uid)) %>%
+                        group_by(orgunit) %>%
+                        summarise(n())
+  }
   View(missing_orgunits)
 }
 
@@ -166,12 +184,20 @@ if (!isTRUE(check_only)) {
 
   # Create a CSV file containing only one orgunit's data for testing
   # but only if test_orgunit contains a name
-  if (nchar(test_orgunit) > 0) {
+  if (nchar(test_orgunit) > 0 & !isTRUE(match_on_orgcode) ) {
 
     data_to_import %>%
       filter(orgunit == toupper(test_orgunit)) %>%
       export_for_dhis2("testing_file")
   }
+  # or if test_orgcode contains a code
+  if (nchar(test_orgcode) > 0 & isTRUE(match_on_orgcode) ) {
+
+    data_to_import %>%
+      filter(code == toupper(test_orgcode)) %>%
+      export_for_dhis2("testing_file")
+  }
+
 
 }
 

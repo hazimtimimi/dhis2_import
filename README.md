@@ -7,11 +7,20 @@ Use this project to transform Excel spreadsheets into CSV files:
 
 ### Input Excel format
 
-Orgunit | Period | variable_code_1 |  variable_code_2 |  variable_code_3 | etc ... |
+orgunit | period | variable_code_1 |  variable_code_2 |  variable_code_3 | etc ... |
 ------- | ------ | --------------- | ---------------- | ---------------- | ------- | 
 District 1 | 2015Q1 | 120 | 56 | 12 | etc ... 
 District 2 | 2015Q1 | 95 | 46 | 35 | etc ... 
 etc ... |  |  |  |  | 
+
+or, if you have codes for the orgunits:
+
+code | period | variable_code_1 |  variable_code_2 |  variable_code_3 | etc ... |
+------- | ------ | --------------- | ---------------- | ---------------- | ------- | 
+code1 | 2015Q1 | 120 | 56 | 12 | etc ... 
+cde2 | 2015Q1 | 95 | 46 | 35 | etc ... 
+etc ... |  |  |  |  | 
+
 
 ### Output CSV format 
 
@@ -97,27 +106,34 @@ Here is a template to use:
 
 check_only <- TRUE
 
-# 2. Country name and, if you want, an org unit to use for a test data file
+# 2. Method of matchig orgunits to internal DHIS2 ID Orgunit matching mode
+# (TRUE to match on orgunit code or FALSE to match on shortname)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+match_on_orgcode <- TRUE
+
+# 3. Country name and, if you want, an org unit to use for a test data file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 country <- "Timimistan"
 test_orgunit <- "Hazimabad"
+test_orgcode <- "HT-01"
 
-# 3. Input file
+# 4. Input file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 input_folder <- "D:/Example/Timimistan/original_data"
 input_file <- "2014-2016_Notifications_Timimistan.xlsx"
 input_worksheet <- "Sheet1"
 
-# 4. Output file
+# 5. Output file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 output_folder <- "D:/Example/Timimistan/transformed_data"
 output_file <- "timimistan_notifs"
 
 
-# 5. Full path to the DHIS2 reference files for data element and orgunit unique IDs
+# 6. Full path to the DHIS2 reference files for data element and orgunit unique IDs
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 dhis2_orgunit_ids_file <- "D:/Example/dhis2reference/organisation_internal_ids_and_country.csv"
