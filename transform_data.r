@@ -56,9 +56,6 @@ library(stringr)
 # dhis2_data_element_ids_file: Full path to DHIS2 reference file containing data element unique IDs
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-scripts_folder <- getSrcDirectory(function(x) {x})  # See http://stackoverflow.com/a/30306616
-
-setwd(scripts_folder)
 
 source("set_parameters.r")  # particular to each person so this file is in the ignore list
 

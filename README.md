@@ -101,39 +101,44 @@ Here is a template to use:
 # Edit this file each time a new dataset needs to be transformed
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-# 1. Script running mode (TRUE to check only or FALSE to create output files)
+# 1. Path to folder containing these scripts
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+scripts_folder <- getwd() # when running in an RStudio project this will be the root folder of the project.
+
+# 2. Script running mode (TRUE to check only or FALSE to create output files)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 check_only <- TRUE
 
-# 2. Method of matchig orgunits to internal DHIS2 ID Orgunit matching mode
+# 3. Method of matchig orgunits to internal DHIS2 ID Orgunit matching mode
 # (TRUE to match on orgunit code or FALSE to match on shortname)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 match_on_orgcode <- TRUE
 
-# 3. Country name and, if you want, an org unit to use for a test data file
+# 4. Country name and, if you want, an org unit to use for a test data file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 country <- "Timimistan"
 test_orgunit <- "Hazimabad"
 test_orgcode <- "HT-01"
 
-# 4. Input file
+# 5. Input file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 input_folder <- "D:/Example/Timimistan/original_data"
 input_file <- "2014-2016_Notifications_Timimistan.xlsx"
 input_worksheet <- "Sheet1"
 
-# 5. Output file
+# 6. Output file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 output_folder <- "D:/Example/Timimistan/transformed_data"
 output_file <- "timimistan_notifs"
 
 
-# 6. Full path to the DHIS2 reference files for data element and orgunit unique IDs
+# 7. Full path to the DHIS2 reference files for data element and orgunit unique IDs
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 dhis2_orgunit_ids_file <- "D:/Example/dhis2reference/organisation_internal_ids_and_country.csv"
