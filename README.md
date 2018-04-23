@@ -24,20 +24,20 @@ etc ... |  |  |  |  |
 
 ### Output CSV format 
 
-This project creates CSV output files that conform to the DHIS@ specification at https://docs.dhis2.org/2.25/en/developer/html/webapi_data_values.html#webapi_data_values_csv 
+This project creates CSV output files that conform to the DHIS2 specification at https://docs.dhis2.org/2.25/en/developer/html/webapi_data_values.html#webapi_data_values_csv 
 
 
 ## Requirements
 
 * **R packages**:
-    * RODBC
+    * readXL
     * dplyr
     * tidyr
     * stringr
 
-* **R** (I developed these scripts using R version 3.3.2)
+* **R** (I developed these scripts using R version 3.3.2; I updated them in April 2018 using version 3.4.3 )
 
-* **RStudio**, although not strictly necessary (I developed these scripts using RStudio version 1.0.136)
+* **RStudio**, although not strictly necessary (I developed these scripts using RStudio version 1.0.136, and then updated them using 1.1.383)
 
 * **DHIS2** (I developed these scripts using DHIS2 version 2.25). 
     

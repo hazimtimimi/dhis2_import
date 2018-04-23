@@ -116,12 +116,11 @@ check_no_dups_without_diacritics <- function(dhis2_orgunits, match_code) {
 get_excel_data <- function(filename, worksheet){
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Read data from an Excel worksheet using RODBC
+  # Read data from an Excel worksheet using the readXL package
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  conn <- odbcConnectExcel2007(filename)
-  data_to_transform <- sqlFetch(conn,worksheet, stringsAsFactors = FALSE)
-  odbcClose(conn)
+    data_to_transform <- read_excel(path = filename, sheet = worksheet)
+
   return(data_to_transform)
 
 }

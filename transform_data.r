@@ -26,7 +26,7 @@ rm(list=ls())
 
 # Load packages ----
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-library(RODBC)
+library(readxl)
 library(dplyr)
 library(tidyr)
 library(stringr)
